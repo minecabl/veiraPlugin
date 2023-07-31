@@ -1,0 +1,17 @@
+name: Veira
+version: '${project.version}'
+main: kabl.veira.Veira
+api-version: 1.20
+authors: [ Kabl ]
+description: Funny custom meme plugin
+
+commands:
+  nword:
+    description: Zeigt wie oft ein Spieler das N-Wort geschrieben hat
+    usage: /<command>
+
+  playtime:
+    description: Zeigt Spielzeit von Spielern an
+    usage: /<command>
+    aliases:
+      - spielzeit
