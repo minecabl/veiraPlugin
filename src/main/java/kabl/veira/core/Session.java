@@ -2,7 +2,11 @@ package kabl.veira.core;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import kabl.veira.Daily.DailyQuest;
+import kabl.veira.Daily.Quests.TestQuest;
 import kabl.veira.Veira;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -12,6 +16,7 @@ import java.util.*;
 
 public class Session {
     private HashMap<UUID, VeiraPlayer> session;
+    private List<DailyQuest> dailyQuests;
 
     public Session() throws IOException {
         session = new HashMap<UUID, VeiraPlayer>();
@@ -27,7 +32,10 @@ public class Session {
             }
         }
 
-    };
+        dailyQuests = new LinkedList<DailyQuest>();
+        dailyQuests.add(null);
+        dailyQuests.add(new TestQuest());
+    }
 
     public void addPlayer(Player p, VeiraPlayer v){
         if(this.session.get(p.getUniqueId()) != null){
@@ -58,5 +66,13 @@ public class Session {
         playerList.sort(comparator);
         Collections.reverse(playerList);
         return playerList;
+    }
+
+    public DailyQuest quest(int i) {
+        return this.dailyQuests.get(i);
+    }
+
+    public void cancelAllQuests(ScheduledTask scheduledTask) {
+        Veira.pluginInstance.getServer().broadcast(Component.text("Minute"));
     }
 }

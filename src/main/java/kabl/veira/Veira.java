@@ -1,5 +1,6 @@
 package kabl.veira;
 
+import kabl.veira.Daily.DailyCommand;
 import kabl.veira.commands.Nword;
 import kabl.veira.commands.Playtime;
 import kabl.veira.core.Session;
@@ -17,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public final class Veira extends JavaPlugin {
 
@@ -47,6 +49,8 @@ public final class Veira extends JavaPlugin {
         }
 
         this.register();
+
+        getServer().getAsyncScheduler().runAtFixedRate(this, session::cancelAllQuests, 0, 1, TimeUnit.MINUTES);
     }
 
     @Override
@@ -67,5 +71,6 @@ public final class Veira extends JavaPlugin {
 
         getCommand("nword").setExecutor(new Nword());
         getCommand("playtime").setExecutor(new Playtime());
+        getCommand("daily").setExecutor(new DailyCommand());
     }
 }

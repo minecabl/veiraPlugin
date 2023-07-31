@@ -15,9 +15,13 @@ public class DailyCommand implements CommandExecutor {
             VeiraPlayer p = Veira.session.getVeiraPlayer((Player) sender);
 
             if(Veira.debug){
-                sender.sendMessage("QuestID: " + p.getDailyID());
+                if(!(p.getDaily() == null)){
+                    sender.sendMessage("QuestID: " + p.getDaily().getId());
+                    sender.sendMessage("test: " + p.getDaily().getTitle());
+                }
             }
 
+            p.setDaily(1);
 
             return true;
         }

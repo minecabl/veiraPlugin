@@ -2,7 +2,9 @@ package kabl.veira.core;
 
 import com.google.gson.JsonObject;
 import kabl.veira.Daily.DailyQuest;
+import kabl.veira.Veira;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
@@ -20,13 +22,15 @@ public class VeiraPlayer {
     private long diamonds;
     private long nwordcount;
 
-    private int dailyID;
+    private DailyQuest daily;
     private boolean dailyNotification;
     private LocalDateTime dailyDate;
+    private boolean dailyComplete;
 
-
+    private Player player;
 
     public VeiraPlayer(Player p){
+        this.player = p;
         //New Player
         this.playtime = 0;
         this.lastupdate = System.currentTimeMillis()/1000;
@@ -34,12 +38,13 @@ public class VeiraPlayer {
         this.name = p.getName();
 
         //Daily
-        this.dailyID = 0;
+        this.daily = null;
         this.dailyNotification = false;
         DailyQuest.givePlayerNewQuest(this);
     }
 
     public VeiraPlayer(Player p, JsonObject j){
+        this.player = p;
         //Login Player
         this.name = p.getName();
         this.playtime = j.has("playtime") ? j.get("playtime").getAsLong() : 0;
@@ -51,16 +56,18 @@ public class VeiraPlayer {
             LocalDateTime fromFile = LocalDateTime.parse(j.get("dailyDate").getAsString());
             if (fromFile.getDayOfYear() < LocalDateTime.now().getDayOfYear()){
                 //New Daily
-                this.dailyID = 0;
+                this.daily = null;
                 this.dailyNotification = false;
                 DailyQuest.givePlayerNewQuest(this);
             } else {
-                this.dailyID = j.has("dailyID") ? j.get("dailyID").getAsInt() : 0;
+                Veira.log("Test: " + j.get("dailyID").getAsInt());
+                this.daily = DailyQuest.getQuestById(j.has("dailyID") ? j.get("dailyID").getAsInt() : 0);
                 this.dailyDate = fromFile;
                 this.dailyNotification = true;
+                this.dailyComplete = j.has("dailyComplete") && j.get("dailyComplete").getAsBoolean();
             }
         } else {
-            this.dailyID = 0;
+            this.daily = null;
             this.dailyNotification = false;
             DailyQuest.givePlayerNewQuest(this);
         }
@@ -80,7 +87,7 @@ public class VeiraPlayer {
         result.addProperty("name", this.name);
         result.addProperty("playtime", this.playtime + System.currentTimeMillis()/1000 - this.lastupdate);
         result.addProperty("nwordcount", this.nwordcount);
-        result.addProperty("dailyID", this.dailyID);
+        result.addProperty("dailyID", this.daily.getId());
         result.addProperty("dailyNotification", this.dailyNotification);
         result.addProperty("dailyDate", String.valueOf(this.dailyDate));
 
@@ -129,8 +136,8 @@ public class VeiraPlayer {
         return this.name;
     }
 
-    public int getDailyID() {
-        return this.dailyID;
+    public DailyQuest getDaily() {
+        return this.daily;
     }
 
     public boolean getDailyNotification(){
@@ -142,7 +149,18 @@ public class VeiraPlayer {
     }
 
     public void setDaily(int i) {
-        this.dailyID = i;
+        this.daily = Veira.session.quest(i);
         this.dailyDate = LocalDateTime.now();
+        this.dailyComplete = false;
+    }
+
+    public boolean getDailyStatus(){
+        return dailyComplete;
+    }
+
+    public void completedQuest() {
+        this.dailyComplete = true;
+        this.player.playSound(this.player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 10, 29);
+
     }
 }

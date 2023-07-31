@@ -15,3 +15,9 @@ commands:
     usage: /<command>
     aliases:
       - spielzeit
+  daily:
+    description: Tägliche Aufgaben
+    usage: /<command>
+    aliases:
+      - quest
+      - quests
