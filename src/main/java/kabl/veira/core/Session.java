@@ -7,18 +7,21 @@ import kabl.veira.Daily.DailyQuest;
 import kabl.veira.Daily.Quests.TestQuest;
 import kabl.veira.Veira;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.*;
 
 public class Session {
     private HashMap<UUID, VeiraPlayer> session;
-    private List<DailyQuest> dailyQuests;
+    private List<Class<DailyQuest>> dailyQuests;
+    private HashMap<UUID, DailyQuest> activeQuests;
 
-    public Session() throws IOException {
+    public Session() throws IOException, ClassNotFoundException {
         session = new HashMap<UUID, VeiraPlayer>();
         Gson gson = new Gson();
 
@@ -32,9 +35,11 @@ public class Session {
             }
         }
 
-        dailyQuests = new LinkedList<DailyQuest>();
-        dailyQuests.add(null);
-        dailyQuests.add(new TestQuest());
+        dailyQuests = new LinkedList<>();
+        dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.DailyQuest"));
+        dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.Quests.TestQuest"));
+
+        activeQuests = new HashMap<UUID, DailyQuest>();
     }
 
     public void addPlayer(Player p, VeiraPlayer v){
@@ -68,11 +73,25 @@ public class Session {
         return playerList;
     }
 
-    public DailyQuest quest(int i) {
-        return this.dailyQuests.get(i);
+    public DailyQuest getQuest(int i) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        return this.dailyQuests.get(i).getDeclaredConstructor().newInstance();
     }
 
     public void cancelAllQuests(ScheduledTask scheduledTask) {
-        Veira.pluginInstance.getServer().broadcast(Component.text("Minute"));
+        Veira.pluginInstance.getServer().broadcast(Component.text("Tägliche Herrausforderungen wurden zurückgesetzt!").color(NamedTextColor.RED));
+        this.activeQuests = new HashMap<UUID, DailyQuest>();
     }
+
+    public DailyQuest getActiveQuest(UUID uniqueId) {
+        return this.activeQuests.get(uniqueId);
+    }
+
+    public void addActiveQuest(UUID id, DailyQuest quest){
+        this.activeQuests.put(id, quest);
+    }
+
+    public void removeActiveQuest(UUID id){
+        this.activeQuests.remove(id);
+    }
+
 }

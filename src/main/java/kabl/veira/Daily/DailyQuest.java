@@ -2,6 +2,11 @@ package kabl.veira.Daily;
 
 import kabl.veira.Veira;
 import kabl.veira.core.VeiraPlayer;
+import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
+
+import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 
 public abstract class DailyQuest {
 
@@ -9,30 +14,53 @@ public abstract class DailyQuest {
     public String questTitle;
     public String questDescription;
 
-    public static void givePlayerNewQuest(VeiraPlayer veiraPlayer) {
+    public boolean dailyNotification;
+    public LocalDateTime dailyDate;
+    public boolean dailyComplete;
+
+    public Player player;
+
+    public static void givePlayerNewQuest(VeiraPlayer veiraPlayer) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
         veiraPlayer.setDaily(1);
         Veira.log("tried to give new Quest");
     }
 
-    public static DailyQuest getQuestById(int i) {
-        return Veira.session.quest(i);
+    public static DailyQuest getQuestById(int i) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+        return Veira.session.getQuest(i);
     }
 
-    public void acceptQuest(VeiraPlayer p){
-        p.setDaily(id);
+
+    public int getId() {
+        return this.id;
     }
 
-    public void cancelQuest(VeiraPlayer p){
-        p.setDaily(0);
+    public String getTitle() {
+        return this.questTitle;
     }
 
-    public void completeQuest(VeiraPlayer p){
-        p.completedQuest();
+    public String getDescription() {
+        return this.questDescription;
     }
 
-    public abstract int getId();
+    public boolean getDailyNotification(){
+        return this.dailyNotification;
+    }
 
-    public abstract String getTitle();
+    public boolean getComplete(){
+        return this.dailyComplete;
+    }
 
-    public abstract String getDescription();
+    public LocalDateTime getDailyDate(){
+        return this.dailyDate;
+    }
+
+    public abstract boolean checkComplete();
+
+    public abstract boolean completeQuest();
+    public abstract Component getRequirements();
+
+    public DailyQuest setPlayer(Player p){
+        this.player = p;
+        return this;
+    }
 }

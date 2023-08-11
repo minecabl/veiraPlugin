@@ -15,9 +15,34 @@ commands:
     usage: /<command>
     aliases:
       - spielzeit
+
   daily:
     description: Tägliche Aufgaben
     usage: /<command>
     aliases:
       - quest
       - quests
+
+  aktivierungsmodussteuerungsmodul:
+    description: Zufälliger Effekt (Achtung kann literally gamebreaking sein)
+    usage: /<command> starten
+
+  deposit:
+    description: todo
+    usage: /<command> <amount>
+
+  withdraw:
+    description: todo
+    usage: /<command> <amount>
+
+  info:
+    description: todo
+    usage: /<command> <name>
+    aliases:
+      - who
+      - wer
+      - informationsbeschaffung
+
+  gamble:
+    description: todo
+    usage: /<command>

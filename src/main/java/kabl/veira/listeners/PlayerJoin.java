@@ -13,12 +13,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class PlayerJoin implements Listener {
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e) throws IOException {
+    public void onPlayerJoin(PlayerJoinEvent e) throws IOException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
         Player p = e.getPlayer();
         Gson gson = new Gson();
 
@@ -35,12 +36,6 @@ public class PlayerJoin implements Listener {
             } else {
                 VeiraPlayer v = new VeiraPlayer(p, result);
                 Veira.session.addPlayer(p, v);
-
-                //Daily
-                if(!v.getDailyNotification()){
-                  p.sendMessage(Component.text("Neue tägliche Herrausforderung verfügbar! /daily").color(NamedTextColor.LIGHT_PURPLE));
-                  v.gotDailyNotification();
-                }
             }
         } else {
             // New Player has joined
