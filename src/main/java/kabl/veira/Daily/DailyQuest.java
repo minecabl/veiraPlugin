@@ -5,8 +5,10 @@ import kabl.veira.core.VeiraPlayer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
+import java.util.Random;
 
 public abstract class DailyQuest {
 
@@ -20,8 +22,11 @@ public abstract class DailyQuest {
 
     public Player player;
 
+    public String reward;
+
     public static void givePlayerNewQuest(VeiraPlayer veiraPlayer) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
-        veiraPlayer.setDaily(1);
+        Random random = new Random();
+        veiraPlayer.setDaily(random.nextInt(Veira.session.getQuestBound()));
         Veira.log("tried to give new Quest");
     }
 
@@ -41,6 +46,8 @@ public abstract class DailyQuest {
     public String getDescription() {
         return this.questDescription;
     }
+
+    public String getReward() {return this.reward;}
 
     public boolean getDailyNotification(){
         return this.dailyNotification;
@@ -63,4 +70,8 @@ public abstract class DailyQuest {
         this.player = p;
         return this;
     }
+
+    public abstract void reroll();
+
+    public abstract void giveOutReward(VeiraPlayer veiraPlayer) throws IOException;
 }

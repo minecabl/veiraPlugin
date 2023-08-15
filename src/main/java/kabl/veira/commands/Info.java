@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 
 public class Info implements CommandExecutor {
@@ -34,11 +35,16 @@ public class Info implements CommandExecutor {
         VeiraPlayer veiraPlayer = Veira.session.getVeiraPlayer(infoPlayer);
 
         sender.sendMessage(Component.text("=== Statistiken für " + infoPlayer.getName() + " ===").color(NamedTextColor.GOLD));
-        sender.sendMessage(Component.text("Spielzeit: " + veiraPlayer.getPlaytime() / 3600.0 + " Stunden"));
+        sender.sendMessage(Component.text("Spielzeit: " + String.format("%.2f", veiraPlayer.getPlaytime() / 3600.0) + " Stunden"));
         sender.sendMessage(Component.text("Diamanten: " + veiraPlayer.getDiamonds()));
         sender.sendMessage(Component.text("Kills: " + infoPlayer.getStatistic(Statistic.PLAYER_KILLS)));
         sender.sendMessage(Component.text("Tode: " + infoPlayer.getStatistic(Statistic.DEATHS)));
         sender.sendMessage(Component.text("K/D: " + String.format("%.2f", infoPlayer.getStatistic(Statistic.PLAYER_KILLS) * 1.0 / infoPlayer.getStatistic(Statistic.DEATHS))));
+        sender.sendMessage(Component.text("Quests abgeschlossen: " + veiraPlayer.getDailyAmount()));
+        sender.sendMessage(Component.text("Monster getötet: " + veiraPlayer.getMonstersKilled()));
+        sender.sendMessage(Component.text("Tiere getötet: " + veiraPlayer.getAnimalsKilled()));
+        sender.sendMessage(Component.text("Blöcke abgebaut: " + veiraPlayer.getBlocksMined()));
+        sender.sendMessage(Component.text("Blöcke gesetzt: " + veiraPlayer.getBlocksPlaced()));
 
         if(Veira.debug){
             sender.sendMessage("Quest: " + veiraPlayer.getDaily().getId());

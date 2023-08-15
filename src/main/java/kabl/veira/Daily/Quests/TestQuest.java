@@ -2,6 +2,7 @@ package kabl.veira.Daily.Quests;
 
 import kabl.veira.Daily.DailyQuest;
 import kabl.veira.Veira;
+import kabl.veira.core.VeiraPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
@@ -11,9 +12,10 @@ import java.time.LocalDateTime;
 
 public class TestQuest extends DailyQuest {
     public TestQuest(){
-        this.id = 1;
+        this.id = 0;
         this.questTitle = "Test-Quest";
         this.questDescription = "Die ist eine Test-Quest, wenn du diese erhalten hast... Opfer";
+        this.reward = "Keiner, xd";
 
         this.dailyNotification = false;
         this.dailyDate = LocalDateTime.now();
@@ -40,5 +42,15 @@ public class TestQuest extends DailyQuest {
     public Component getRequirements() {
         Component result = Component.text("Schreibe \"test\" in den Chat");
         return result;
+    }
+
+    @Override
+    public void reroll() {
+        player.sendMessage("xd");
+    }
+
+    @Override
+    public void giveOutReward(VeiraPlayer veiraPlayer) {
+
     }
 }

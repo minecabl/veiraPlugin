@@ -25,6 +25,8 @@ public class PlayerJoin implements Listener {
 
         if(Veira.debug){
             Veira.log("[Debug]: Player join Event");
+            p.sendMessage(p.getWorld().getName());
+            p.sendMessage("Warnung: Debug ist noch an");
         }
 
         Path playerPath = Path.of(Veira.pluginInstance.veiraPath + "\\" + p.getUniqueId() + ".json");

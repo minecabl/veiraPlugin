@@ -1,9 +1,14 @@
 name: Veira
 version: '${project.version}'
 main: kabl.veira.Veira
-api-version: 1.20
+api-version: '1.20'
 authors: [ Kabl ]
 description: Funny custom meme plugin
+
+permissions :
+  permission.node:
+    description: "This is a permission node"
+    default: op
 
 commands:
   nword:
@@ -28,15 +33,19 @@ commands:
     usage: /<command> starten
 
   deposit:
-    description: todo
+    description: Diamanten einzahlen
     usage: /<command> <amount>
 
   withdraw:
-    description: todo
+    description: Diamanten auszahlen
     usage: /<command> <amount>
 
+  pay:
+    description: Zahle einem Spieler Diamanten
+    usage: /<command> <target> <amount>
+
   info:
-    description: todo
+    description: Zeigt informationen über den Spieler
     usage: /<command> <name>
     aliases:
       - who
@@ -44,5 +53,19 @@ commands:
       - informationsbeschaffung
 
   gamble:
-    description: todo
+    description: Glücksspiel
+    usage: /<command>
+
+  spawn:
+    description: Teleportiert dich an den Spawn, 5 Minuten Cooldown
+    usage: /<command>
+
+  setspawn:
+    description: Setzt world-spawn
+    usage: /<command>
+    permission: permission.node
+    permission-message: You do not have permission to use this command.
+
+  schizo:
+    description: Die stimmen werden lauter
     usage: /<command>

@@ -36,10 +36,15 @@ public class Session {
         }
 
         dailyQuests = new LinkedList<>();
-        dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.DailyQuest"));
         dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.Quests.TestQuest"));
+        dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.Quests.KillPlayerQuest"));
+        dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.Quests.TextBasedQuest"));
 
         activeQuests = new HashMap<UUID, DailyQuest>();
+    }
+
+    public HashMap<UUID, VeiraPlayer> getFullMap() {
+        return this.session;
     }
 
     public void addPlayer(Player p, VeiraPlayer v){
@@ -57,6 +62,15 @@ public class Session {
         } else {
             Veira.log("Unbekannter Spieler in Session gesucht: "+p.getName()+" | "+p.getUniqueId());
             p.sendMessage("Ein Fehler ist aufgetreten, bitte melde dies Kabl und verbinde dich neu zum Server :^)");
+            return null;
+        }
+    }
+
+    public VeiraPlayer getVeiraPlayer(UUID id){
+        if(session.get(id) != null){
+            return session.get(id);
+        } else {
+            Veira.log("Unbekannter Spieler in Session gesucht: " + id);
             return null;
         }
     }
@@ -94,4 +108,7 @@ public class Session {
         this.activeQuests.remove(id);
     }
 
+    public int getQuestBound() {
+        return this.dailyQuests.size();
+    }
 }

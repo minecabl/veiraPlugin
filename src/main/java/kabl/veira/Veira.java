@@ -1,6 +1,7 @@
 package kabl.veira;
 
 import kabl.veira.Daily.DailyCommand;
+import kabl.veira.Daily.Quests.KillPlayerQuestListener;
 import kabl.veira.Gamble.GambleCommand;
 import kabl.veira.commands.*;
 import kabl.veira.core.Session;
@@ -8,6 +9,7 @@ import kabl.veira.Gamble.GambleClickEvent;
 import kabl.veira.listeners.PlayerChat;
 import kabl.veira.listeners.PlayerJoin;
 import kabl.veira.listeners.PlayerLeave;
+import kabl.veira.listeners.StatEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,7 +28,7 @@ public final class Veira extends JavaPlugin {
     public static Veira pluginInstance;
     public static Session session;
     public String veiraPath = System.getProperty("user.dir") + "\\plugins\\Veira";
-    public static boolean debug = true;
+    public static boolean debug = false;
 
     @Override
     public void onEnable() {
@@ -71,16 +73,23 @@ public final class Veira extends JavaPlugin {
         PM.registerEvents(new PlayerChat(), this);
         PM.registerEvents(new GambleClickEvent(), this);
 
+        PM.registerEvents(new KillPlayerQuestListener(), this);
+        PM.registerEvents(new StatEvent(), this);
+
         getCommand("nword").setExecutor(new Nword());
         getCommand("playtime").setExecutor(new Playtime());
         getCommand("daily").setExecutor(new DailyCommand());
         getCommand("aktivierungsmodussteuerungsmodul").setExecutor(new Aktivierungsmodussteuerungsmodul());
         getCommand("info").setExecutor(new Info());
+        getCommand("spawn").setExecutor(new Spawn());
+        getCommand("setspawn").setExecutor(new Setspawn());
 
         getCommand("deposit").setExecutor(new Deposit());
         getCommand("withdraw").setExecutor(new Withdraw());
+        getCommand("pay").setExecutor(new Pay());
 
         getCommand("gamble").setExecutor(new GambleCommand());
+        getCommand("schizo").setExecutor(new Schizo());
     }
 
     private long minutesTillMidnight(){

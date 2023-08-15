@@ -4,9 +4,10 @@ import com.google.gson.JsonObject;
 import kabl.veira.Daily.DailyQuest;
 import kabl.veira.Gamble.SlotsGame;
 import kabl.veira.Veira;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Objects;
 
 public class VeiraPlayer {
 
@@ -30,10 +30,17 @@ public class VeiraPlayer {
     private long kablcoins;
 
     private LocalDateTime dailyDate;
-
+    private long dailyAmount;
 
     private Player player;
     private SlotsGame slotsGame;
+
+    private long blocksMined;
+    private long blocksPlaced;
+    private long monstersKilled;
+    private long animalsKilled;
+
+    private boolean schizo;
 
     public VeiraPlayer(Player p) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
         this.player = p;
@@ -45,8 +52,16 @@ public class VeiraPlayer {
         this.diamonds = 0;
         this.kablcoins = 0;
 
+        this.blocksMined = 0;
+        this.blocksPlaced = 0;
+        this.monstersKilled = 0;
+        this.animalsKilled = 0;
+
+        this.schizo = false;
+
         //Daily
         this.dailyDate = null;
+        this.dailyAmount = 0;
         DailyQuest.givePlayerNewQuest(this);
     }
 
@@ -59,21 +74,15 @@ public class VeiraPlayer {
         this.nwordcount = j.has("nwordcount") ? j.get("nwordcount").getAsLong() : 0;
         this.diamonds = j.has("diamonds") ? j.get("diamonds").getAsLong() : 0;
         this.kablcoins = j.has("kablcoins") ? j.get("kablcoins").getAsLong() : 0;
+        this.dailyAmount = j.has("dailyAmount") ? j.get("dailyAmount").getAsLong() : 0;
+        this.dailyDate = j.has("dailyDate") ? LocalDateTime.parse(j.get("dailyDate").getAsString()) : null;
 
-        //Daily
-        if(j.has("dailyDate")){
-            if(Objects.equals(j.get("dailyDate").getAsString(), "null") || Objects.equals(j.get("dailyDate").getAsString(), "")){
-                DailyQuest.givePlayerNewQuest(this);
-            } else {
-                LocalDateTime fromFile = LocalDateTime.parse(j.get("dailyDate").getAsString());
-                if (fromFile.getDayOfYear() < LocalDateTime.now().getDayOfYear()){
-                    //New Daily
-                    DailyQuest.givePlayerNewQuest(this);
-                }
-            }
-        } else {
-            DailyQuest.givePlayerNewQuest(this);
-        }
+        this.blocksMined = j.has("blocksMined") ? j.get("blocksMined").getAsLong() : 0;
+        this.blocksPlaced = j.has("blocksPlaced") ? j.get("blocksPlaced").getAsLong() : 0;
+        this.monstersKilled = j.has("monstersKilled") ? j.get("monstersKilled").getAsLong() : 0;
+        this.animalsKilled = j.has("animalsKilled") ? j.get("animalsKilled").getAsLong() : 0;
+
+        this.schizo = false;
     }
 
     public VeiraPlayer(JsonObject j){
@@ -84,6 +93,13 @@ public class VeiraPlayer {
         this.nwordcount = j.has("nwordcount") ? j.get("nwordcount").getAsLong() : 0;
         this.diamonds = j.has("diamonds") ? j.get("diamonds").getAsLong() : 0;
         this.kablcoins = j.has("kablcoins") ? j.get("kablcoins").getAsLong() : 0;
+        this.dailyAmount = j.has("dailyAmount") ? j.get("dailyAmount").getAsLong() : 0;
+        this.blocksMined = j.has("blocksMined") ? j.get("blocksMined").getAsLong() : 0;
+        this.blocksPlaced = j.has("blocksPlaced") ? j.get("blocksPlaced").getAsLong() : 0;
+        this.monstersKilled = j.has("monstersKilled") ? j.get("monstersKilled").getAsLong() : 0;
+        this.animalsKilled = j.has("animalsKilled") ? j.get("animalsKilled").getAsLong() : 0;
+
+        this.schizo = false;
     }
 
     public JsonObject getPlayerAsJson(){
@@ -96,12 +112,20 @@ public class VeiraPlayer {
         result.addProperty("dailyDate", String.valueOf(this.dailyDate));
         result.addProperty("diamonds", this.diamonds);
         result.addProperty("kablcoins", this.kablcoins);
+        result.addProperty("dailyAmount", this.dailyAmount);
+        result.addProperty("blocksMined", this.blocksMined);
+        result.addProperty("blocksPlaced", this.blocksPlaced);
+        result.addProperty("monstersKilled", this.monstersKilled);
+        result.addProperty("animalsKilled", this.animalsKilled);
 
         return result;
     }
 
     public boolean depositDiamond(long amount) throws IOException {
-        this.player.sendMessage("Trying to deposit: " + amount);
+        if (Veira.debug) {
+            this.player.sendMessage("Trying to deposit: " + amount);
+        }
+
         if(amount <= 0){
             this.player.sendMessage("Surely :)");
             return false;
@@ -129,7 +153,7 @@ public class VeiraPlayer {
             }
             this.diamonds += counter;
             this.savePlayer();
-            player.sendMessage(counter+" Diamanten eingezahlt");
+            player.sendMessage(Component.text("+" + counter+" Diamanten").color(NamedTextColor.GREEN));
             return true;
         }
 
@@ -145,6 +169,8 @@ public class VeiraPlayer {
         if(amount > this.diamonds){
             amount = this.diamonds;
         }
+
+        long amountForMsg = amount;
 
         Inventory inv = this.player.getInventory();
 
@@ -189,6 +215,7 @@ public class VeiraPlayer {
                 }
             }
         }
+        this.player.sendMessage(Component.text("-" + amountForMsg + " Diamanten").color(NamedTextColor.RED));
         this.savePlayer();
         return true;
     }
@@ -221,10 +248,13 @@ public class VeiraPlayer {
         this.dailyDate = LocalDateTime.now();
     }
 
-    public void completedQuest() {
+    public void completedQuest() throws IOException {
+        this.getDaily().completeQuest();
+        this.getDaily().giveOutReward(this);
+        this.dailyAmount++;
         Veira.session.removeActiveQuest(this.player.getUniqueId());
         this.player.playSound(this.player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 10, 29);
-        this.getDaily().completeQuest();
+        this.player.sendMessage("Du hast deine tägliche Herrausforderung abgeschlossen!");
     }
 
     public long getDiamonds() {
@@ -267,5 +297,81 @@ public class VeiraPlayer {
 
     public void setDiamonds(long l) {
         this.diamonds = l;
+    }
+
+    public long getDailyAmount() {
+        return this.dailyAmount;
+    }
+
+    public Player getPlayer() {
+        return this.player;
+    }
+
+    public void addDiamonds(long amount) throws IOException {
+        this.diamonds += amount;
+        player.sendMessage(Component.text("+" + amount +" Diamanten").color(NamedTextColor.GREEN));
+        this.savePlayer();
+    }
+
+    public void removeDiamonds(long amount) throws IOException {
+        this.diamonds -= amount;
+        this.player.sendMessage(Component.text("-" + amount + " Diamanten").color(NamedTextColor.RED));
+        this.savePlayer();
+    }
+
+    public long getBlocksMined() {
+        return this.blocksMined;
+    }
+
+    public long getBlocksPlaced() {
+        return this.blocksPlaced;
+    }
+
+    public long getMonstersKilled() {
+        return this.monstersKilled;
+    }
+
+    public long getAnimalsKilled() {
+        return this.animalsKilled;
+    }
+
+    public void setBlocksMined(long amount) {
+        this.blocksMined = amount;
+    }
+
+    public void setBlocksPlaced(long amount) {
+        this.blocksPlaced = amount;
+    }
+
+    public void setMonstersKilled(long amount) {
+        this.monstersKilled = amount;
+    }
+
+    public void setAnimalsKilled(long amount) {
+        this.animalsKilled = amount;
+    }
+
+    public void incrementMonstersKilled() {
+        this.monstersKilled++;
+    }
+
+    public void incrementAnimalsKilled() {
+        this.animalsKilled++;
+    }
+
+    public void incrementBlocksMined() {
+        this.blocksMined++;
+    }
+
+    public void incrementBlocksPlaced() {
+        this.blocksPlaced++;
+    }
+
+    public void schizoToggle() {
+        this.schizo = !this.schizo;
+    }
+
+    public boolean isSchizo() {
+        return this.schizo;
     }
 }

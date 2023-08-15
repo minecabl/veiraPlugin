@@ -62,10 +62,10 @@ public class Aktivierungsmodussteuerungsmodul implements CommandExecutor {
                         curr.setZ(curr.getZ() + random.nextInt(6) - 3);
                         p.teleport(curr);
                         break;
-
+                    case 20: Veira.session.getVeiraPlayer(p).schizoToggle();
                 }
             }
         }
-        return false;
+        return true;
     }
 }
