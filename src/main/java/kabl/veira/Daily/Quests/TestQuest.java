@@ -39,9 +39,8 @@ public class TestQuest extends DailyQuest {
     }
 
     @Override
-    public Component getRequirements() {
-        Component result = Component.text("Schreibe \"test\" in den Chat");
-        return result;
+    public String getRequirements() {
+        return "Schreibe \"test\" in den Chat";
     }
 
     @Override

@@ -36,8 +36,11 @@ public class Session {
         }
 
         dailyQuests = new LinkedList<>();
-        dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.Quests.TestQuest"));
         dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.Quests.KillPlayerQuest"));
+        dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.Quests.TextBasedQuest"));
+        dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.Quests.TextBasedQuest"));
+        dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.Quests.TextBasedQuest"));
+        dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.Quests.TextBasedQuest"));
         dailyQuests.add((Class<DailyQuest>) Class.forName("kabl.veira.Daily.Quests.TextBasedQuest"));
 
         activeQuests = new HashMap<UUID, DailyQuest>();
@@ -94,6 +97,12 @@ public class Session {
     public void cancelAllQuests(ScheduledTask scheduledTask) {
         Veira.pluginInstance.getServer().broadcast(Component.text("Tägliche Herrausforderungen wurden zurückgesetzt!").color(NamedTextColor.RED));
         this.activeQuests = new HashMap<UUID, DailyQuest>();
+
+        Object[] values = Veira.session.getFullMap().values().toArray();
+
+        for(Object entry: values) {
+            ((VeiraPlayer)entry).resetDaily();
+        }
     }
 
     public DailyQuest getActiveQuest(UUID uniqueId) {

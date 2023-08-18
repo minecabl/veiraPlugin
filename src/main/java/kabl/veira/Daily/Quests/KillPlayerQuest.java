@@ -39,8 +39,8 @@ public class KillPlayerQuest extends DailyQuest {
     }
 
     @Override
-    public Component getRequirements() {
-        return Component.text("Töte " + this.target);
+    public String getRequirements() {
+        return "Töte " + this.target;
     }
 
     @Override

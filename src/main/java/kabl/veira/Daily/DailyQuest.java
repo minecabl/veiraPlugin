@@ -64,7 +64,7 @@ public abstract class DailyQuest {
     public abstract boolean checkComplete();
 
     public abstract boolean completeQuest();
-    public abstract Component getRequirements();
+    public abstract String getRequirements();
 
     public DailyQuest setPlayer(Player p){
         this.player = p;

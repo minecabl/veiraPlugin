@@ -6,10 +6,8 @@ import kabl.veira.Gamble.GambleCommand;
 import kabl.veira.commands.*;
 import kabl.veira.core.Session;
 import kabl.veira.Gamble.GambleClickEvent;
-import kabl.veira.listeners.PlayerChat;
-import kabl.veira.listeners.PlayerJoin;
-import kabl.veira.listeners.PlayerLeave;
-import kabl.veira.listeners.StatEvent;
+import kabl.veira.core.VeiraPlayer;
+import kabl.veira.listeners.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,13 +25,14 @@ public final class Veira extends JavaPlugin {
 
     public static Veira pluginInstance;
     public static Session session;
-    public String veiraPath = System.getProperty("user.dir") + "\\plugins\\Veira";
+    public String veiraPath;
     public static boolean debug = false;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         pluginInstance = this;
+        veiraPath = pluginInstance.getDataFolder().getAbsolutePath();
         try {
             session = new Session();
         } catch (IOException | ClassNotFoundException e) {
@@ -53,12 +52,25 @@ public final class Veira extends JavaPlugin {
 
         this.register();
 
-        getServer().getAsyncScheduler().runAtFixedRate(this, session::cancelAllQuests, minutesTillMidnight(), 1440, TimeUnit.MINUTES);
+        if (debug) {
+            getServer().getAsyncScheduler().runAtFixedRate(this, session::cancelAllQuests, 2, 2, TimeUnit.MINUTES);
+        } else {
+            getServer().getAsyncScheduler().runAtFixedRate(this, session::cancelAllQuests, minutesTillMidnight(), 1440, TimeUnit.MINUTES);
+        }
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        Object[] values = Veira.session.getFullMap().values().toArray();
+
+        for(Object entry: values) {
+            try {
+                ((VeiraPlayer)entry).savePlayer();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void log(String msg){
@@ -75,14 +87,16 @@ public final class Veira extends JavaPlugin {
 
         PM.registerEvents(new KillPlayerQuestListener(), this);
         PM.registerEvents(new StatEvent(), this);
+        PM.registerEvents(new InventoryClick(), this);
 
         getCommand("nword").setExecutor(new Nword());
         getCommand("playtime").setExecutor(new Playtime());
-        getCommand("daily").setExecutor(new DailyCommand());
+        getCommand("quest").setExecutor(new DailyCommand());
         getCommand("aktivierungsmodussteuerungsmodul").setExecutor(new Aktivierungsmodussteuerungsmodul());
         getCommand("info").setExecutor(new Info());
         getCommand("spawn").setExecutor(new Spawn());
         getCommand("setspawn").setExecutor(new Setspawn());
+        getCommand("daily").setExecutor(new Reward());
 
         getCommand("deposit").setExecutor(new Deposit());
         getCommand("withdraw").setExecutor(new Withdraw());

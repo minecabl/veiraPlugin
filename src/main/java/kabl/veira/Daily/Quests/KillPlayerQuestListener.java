@@ -11,12 +11,15 @@ import java.io.IOException;
 public class KillPlayerQuestListener implements Listener {
     @EventHandler
     public void onPlayerKill(PlayerDeathEvent event) throws IOException {
-        VeiraPlayer killer = Veira.session.getVeiraPlayer(event.getPlayer().getKiller());
+        if (event.getPlayer().getKiller() != null) {
+            VeiraPlayer killer = Veira.session.getVeiraPlayer(event.getPlayer().getKiller());
 
-        if (killer.getDaily().getId() == 1) {
-            if (killer.getDaily().getRequirements().toString().contains(event.getPlayer().getName())) {
-                killer.completedQuest();
+            if (killer.getDaily().getId() == 1) {
+                if (killer.getDaily().getRequirements().toString().contains(event.getPlayer().getName())) {
+                    killer.completedQuest();
+                }
             }
         }
+
     }
 }

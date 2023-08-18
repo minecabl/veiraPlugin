@@ -21,11 +21,10 @@ commands:
     aliases:
       - spielzeit
 
-  daily:
+  quest:
     description: Tägliche Aufgaben
     usage: /<command>
     aliases:
-      - quest
       - quests
 
   aktivierungsmodussteuerungsmodul:
@@ -68,4 +67,14 @@ commands:
 
   schizo:
     description: Die stimmen werden lauter
+    usage: /<command>
+
+  daily:
+    description: Hole dir deine Tägliche Belohnung ab
+    usage: /<command>
+    aliases:
+      - reward
+
+  csgo:
+    description: Random cs Video
     usage: /<command>

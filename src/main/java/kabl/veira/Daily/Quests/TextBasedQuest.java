@@ -84,8 +84,8 @@ public class TextBasedQuest extends DailyQuest {
     }
 
     @Override
-    public Component getRequirements() {
-        return Component.text("Nach eigenem ermessen, mit /daily complete beenden");
+    public String getRequirements() {
+        return "Nach eigenem ermessen, mit /daily complete beenden";
     }
 
     @Override

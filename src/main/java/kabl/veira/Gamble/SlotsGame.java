@@ -205,7 +205,6 @@ public class SlotsGame {
         }
 
         Veira.session.getVeiraPlayer(player).addKablcoins(wonCoins);
-        player.sendMessage("+"+wonCoins+" Kablcoins");
 
         ItemStack info = new ItemStack(Material.OAK_SIGN);
 

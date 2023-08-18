@@ -1,20 +1,12 @@
 package kabl.veira.Gamble;
 
 import kabl.veira.core.InventoryProvider;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 
 public class GambleCommand implements CommandExecutor {
     @Override
@@ -26,6 +18,6 @@ public class GambleCommand implements CommandExecutor {
             p.openInventory(InventoryProvider.getGambleChooseGUI(p));
         }
 
-        return false;
+        return true;
     }
 }
